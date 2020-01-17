@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QTcpSocket>
+#include <QTime>
 
 class TcpClient : public QWidget
 {
@@ -10,7 +11,13 @@ class TcpClient : public QWidget
 public:
     explicit TcpClient(QWidget *parent = nullptr);
     ~TcpClient();
-    void Connect();
+    void Connect(QString ServerAddress, quint16 address);
+    void Disconnect();
+    void SocketWrite(QString message);
+    bool isOpen;
+
+signals:
+    void ServerConnected(bool state);
 
 private:
     QTcpSocket *tcpSocket;
@@ -20,9 +27,6 @@ private slots:
     void SocketDisconnected();
     void SocketRead();
     void SocketError(QAbstractSocket::SocketError error);
-
-signals:
-
 };
 
 #endif // TCPCLIENT_H

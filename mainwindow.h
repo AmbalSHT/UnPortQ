@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QResizeEvent>
+#include <QSettings>
 #include "tcpclient.h"
 
 QT_BEGIN_NAMESPACE
@@ -17,12 +19,16 @@ public:
     ~MainWindow();
 
 private:
+    Ui::MainWindow *ui;
     TcpClient *Client;
 
 private slots:
     void on_butConnect_clicked();
+    void on_butSend_clicked();
+    void TcpServerConnected(bool state);
 
-private:
-    Ui::MainWindow *ui;
+protected:
+    virtual void resizeEvent(QResizeEvent *);
+
 };
 #endif // MAINWINDOW_H
