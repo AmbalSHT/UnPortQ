@@ -7,16 +7,20 @@ MainWindow::MainWindow(QWidget *parent)
 {
     qDebug() << "Start programm";
     ui->setupUi(this);
-    //ui->centralwidget->setLayout(ui->horizontalLayout);
     ui->tblLog->horizontalHeader()->setSectionResizeMode(2, QHeaderView::Stretch);
 
-    Client = new TcpClient(this);
-    connect(Client, SIGNAL(ServerConnected(bool)), this, SLOT(TcpServerConnected(bool)));
-
+    // Настройки
     QSettings *settings = new QSettings("settings.conf", QSettings::IniFormat, this);
     ui->txtServerAddress->setText(settings->value("server/address", "0.0.0.0").toString());
     ui->txtServerPort->setText(settings->value("server/port", "585").toString());
     ui->txtSend->setText(settings->value("message/send", "").toString());
+
+    // Menu
+    QMenu *menuFile = menuBar()->addMenu("Файл");
+    QAction *menuFile_New = new QAction("Новый", this);
+    menuFile_New->setShortcut(tr("Ctrl+N"));
+    connect(menuFile_New, SIGNAL(triggered()), this, SLOT(mnuFile_New_Clicked()));
+    menuFile->addAction(menuFile_New);
 }
 
 MainWindow::~MainWindow()
@@ -27,7 +31,7 @@ MainWindow::~MainWindow()
     settings->setValue("message/send", ui->txtSend->toPlainText());
     settings->sync();
 
-    Client->~TcpClient();
+    if (Client != nullptr) Client->~TcpClient();
     delete ui;
 }
 
@@ -64,26 +68,29 @@ void MainWindow::resizeEvent(QResizeEvent* e)
     ui->gbSend->setGeometry(*rect);
 }
 
+
+// ---------------------------- TcpClient ----------------------------
+
+// Подключение / отключение
 void MainWindow::on_butConnect_clicked()
 {
     //qDebug() << "MainWindow::on_butConnect_clicked()";
-    qDebug() << Client->isOpen;
-    if (Client->isOpen)
-    {
-        Client->Disconnect();
-    }
-    else
+    //qDebug() << (Client == nullptr);
+
+    if (Client == nullptr)
     {
         ui->butConnect->setText("Подключение...");
         ui->butConnect->setEnabled(false);
+        Client = new TcpClient(this);
+        connect(Client, SIGNAL(ServerConnected(bool)), this, SLOT(TcpServerConnected(bool)));
+        connect(Client, SIGNAL(Read(QByteArray)), this, SLOT(TcpServerRead(QByteArray)));
         Client->Connect(ui->txtServerAddress->toPlainText(), ui->txtServerPort->toPlainText().toUInt());
     }
-}
-
-void MainWindow::on_butSend_clicked()
-{
-    qDebug() << "MainWindow::on_butSend_clicked()";
-    Client->SocketWrite(ui->txtSend->toPlainText());
+    else
+    {
+        Client->Disconnect();
+        Client = nullptr;
+    }
 }
 
 // Событие подключения / отключения
@@ -94,4 +101,35 @@ void MainWindow::TcpServerConnected(bool state)
     else
         ui->butConnect->setText("Подключить");
     ui->butConnect->setEnabled(true);
+}
+
+// Отправка данных на сервер
+void MainWindow::on_butSend_clicked()
+{
+    //qDebug() << "MainWindow::on_butSend_clicked()";
+    Client->SocketWrite(ui->txtSend->toPlainText());
+}
+
+// Событие получения данных от сервера
+void MainWindow::TcpServerRead(QByteArray arrBytes)
+{
+    // Вывод в UTF8
+    //QString str = QString::fromUtf8(arrBytes);
+    //qDebug() << str;
+    //ui->tblLog->insertRow(0);
+
+    QString strCurrentTime = CurrentTime->currentTime().toString("hh:mm:ss.zzz");
+    uint rows = ui->tblLog->rowCount();
+    ui->tblLog->insertRow(rows);
+    ui->tblLog->setItem(rows, 0, new QTableWidgetItem(strCurrentTime));
+    ui->tblLog->setItem(rows, 1, new QTableWidgetItem("От сервера"));
+    ui->tblLog->setItem(rows, 2, new QTableWidgetItem(QString::fromUtf8(arrBytes)));    // Вывод в UTF8
+    ui->tblLog->scrollToBottom();
+
+}
+
+// ---------------------------- Меню ----------------------------
+void MainWindow::mnuFile_New_Clicked()
+{
+    qDebug() << "MainWindow::mnuFile_New_Clicked()";
 }

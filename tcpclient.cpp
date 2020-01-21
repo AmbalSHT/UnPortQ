@@ -16,6 +16,7 @@ TcpClient::TcpClient(QWidget *parent) : QWidget(parent)
 
 TcpClient::~TcpClient()
 {
+    Disconnect();
     delete tcpSocket;
 }
 
@@ -74,12 +75,13 @@ void TcpClient::SocketDisconnected()
 // Чтение данных, полученных от сервера
 void TcpClient::SocketRead()
 {
-    qDebug() << "TcpClient::SocketRead() << Socket is ready to read";
+    //qDebug() << "TcpClient::SocketRead() << Socket is ready to read";
     QDataStream inData(tcpSocket);
-    qDebug() << "bytesAvailable: " << tcpSocket->bytesAvailable();
+    //qDebug() << "bytesAvailable: " << tcpSocket->bytesAvailable();
 
-    QByteArray arrBlock;;
-    arrBlock = tcpSocket->read(tcpSocket->bytesAvailable());
+    QByteArray arrBlock = tcpSocket->read(tcpSocket->bytesAvailable());
+    emit Read(arrBlock);
+
     //qDebug() << arrBlock.length();
     /*
     // Побайтный вывод
@@ -88,10 +90,6 @@ void TcpClient::SocketRead()
         qDebug() << arrBlock[i];
     }
     */
-
-    // Вывод в UTF8
-    QString str = QString::fromUtf8(arrBlock);
-    qDebug() << str;
 }
 
 // Событие, вызванное ошибками

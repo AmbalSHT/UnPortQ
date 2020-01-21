@@ -276,14 +276,13 @@ p, li { white-space: pre-wrap; }
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>Файл</string>
-    </property>
-   </widget>
-   <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="mnuFile_Test">
+   <property name="text">
+    <string>Test</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

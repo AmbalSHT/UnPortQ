@@ -18,6 +18,7 @@ public:
 
 signals:
     void ServerConnected(bool state);
+    void Read(QByteArray arrBytes);
 
 private:
     QTcpSocket *tcpSocket;

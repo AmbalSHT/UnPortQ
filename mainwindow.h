@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QResizeEvent>
 #include <QSettings>
+#include <QMenuBar>
+#include <QTime>
 #include "tcpclient.h"
 
 QT_BEGIN_NAMESPACE
@@ -21,11 +23,14 @@ public:
 private:
     Ui::MainWindow *ui;
     TcpClient *Client;
+    QTime *CurrentTime;
 
 private slots:
     void on_butConnect_clicked();
     void on_butSend_clicked();
     void TcpServerConnected(bool state);
+    void TcpServerRead(QByteArray arrBytes);
+    void mnuFile_New_Clicked();
 
 protected:
     virtual void resizeEvent(QResizeEvent *);
