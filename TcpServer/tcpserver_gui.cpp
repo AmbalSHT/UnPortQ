@@ -48,7 +48,7 @@ void TcpServer::GuiInit()
                 QLabel* lblPort = new QLabel("Номер порта");
                 lblPort->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
                 layHostPort->addWidget(lblPort, 0, 0);
-                QLineEdit* linHostPort = new QLineEdit("1585");
+                linHostPort = new QLineEdit("1585");
                 linHostPort->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
                 linHostPort->setInputMask("00000");
                 layHostPort->addWidget(linHostPort, 0, 1);
@@ -60,11 +60,11 @@ void TcpServer::GuiInit()
                 // Host start widgets
                 QGridLayout* layHostState = new QGridLayout(gbHostState);
                 layHostState->setHorizontalSpacing(20);
-                QPushButton* butHostStart = new QPushButton("Запуск");
+                butHostStart = new QPushButton("Запустить");
                 butHostStart->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
                 connect(butHostStart, SIGNAL(released()), this, SLOT(butHostStart_Click()));
                 layHostState->addWidget(butHostStart, 0, 0);
-                QLabel* lblHostStatus = new QLabel("Остановлен");
+                lblHostStatus = new QLabel("Остановлен");
                 layHostState->addWidget(lblHostStatus, 0, 1);
 
             // Filler

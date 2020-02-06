@@ -26,7 +26,12 @@ public:
     ~TcpServer();
 
 private:
+    // GUI
+    QPushButton* butHostStart;
+    QLabel* lblHostStatus;
+    QLineEdit* linHostPort;
     void GuiInit();
+    //
     QTcpServer *Server;
     QTcpSocket *ClientSocket;
 
